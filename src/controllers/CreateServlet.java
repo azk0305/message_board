@@ -51,6 +51,7 @@ public class CreateServlet extends HttpServlet {
         if(_token != null && _token.equals(request.getSession().getId())) {
             em.persist(m);
             em.getTransaction().commit();
+            request.getSession().setAttribute("flush", "登録が完了しました。");
         }
 
         em.close();

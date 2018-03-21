@@ -40,6 +40,7 @@ public class DestroyServlet extends HttpServlet {
         if(_token != null && _token.equals(request.getSession().getId())) {
             em.remove(m);
             em.getTransaction().commit();
+            request.getSession().setAttribute("flush", "削除が完了しました。");
         }
 
         em.close();

@@ -51,6 +51,7 @@ public class UpdateServlet extends HttpServlet {
         String _token = (String)request.getParameter("_token");
         if(_token != null && _token.equals(request.getSession().getId())) {
             em.getTransaction().commit();
+            request.getSession().setAttribute("flush", "更新が完了しました。");
         }
 
         em.close();

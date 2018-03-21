@@ -1,7 +1,6 @@
 package controllers;
 
 import java.io.IOException;
-import java.sql.Timestamp;
 
 import javax.persistence.EntityManager;
 import javax.servlet.ServletException;
@@ -14,16 +13,16 @@ import models.Message;
 import utils.DBUtil;
 
 /**
- * Servlet implementation class UpdateServlet
+ * Servlet implementation class DestroyServlet
  */
-@WebServlet("/update")
-public class UpdateServlet extends HttpServlet {
+@WebServlet("/destroy")
+public class DestroyServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public UpdateServlet() {
+    public DestroyServlet() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -32,24 +31,14 @@ public class UpdateServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.setCharacterEncoding("UTF-8");
-
         EntityManager em = DBUtil.createEntityManager();
         em.getTransaction().begin();
 
         Message m = em.find(Message.class, (Integer)(request.getSession().getAttribute("message_id")));
 
-        String title = request.getParameter("title");
-        m.setTitle(title);
-
-        String content = request.getParameter("content");
-        m.setContent(content);
-
-        Timestamp currentTime = new Timestamp(System.currentTimeMillis());
-        m.setUpdated_at(currentTime);
-
         String _token = (String)request.getParameter("_token");
         if(_token != null && _token.equals(request.getSession().getId())) {
+            em.remove(m);
             em.getTransaction().commit();
         }
 

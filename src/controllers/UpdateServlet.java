@@ -14,16 +14,16 @@ import models.Message;
 import utils.DBUtil;
 
 /**
- * Servlet implementation class CreateServlet
+ * Servlet implementation class UpdateServlet
  */
-@WebServlet("/create")
-public class CreateServlet extends HttpServlet {
+@WebServlet("/update")
+public class UpdateServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public CreateServlet() {
+    public UpdateServlet() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -32,10 +32,12 @@ public class CreateServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.setCharacterEncoding("UTF-8");
+
         EntityManager em = DBUtil.createEntityManager();
         em.getTransaction().begin();
 
-        Message m = new Message();
+        Message m = em.find(Message.class, (Integer)(request.getSession().getAttribute("message_id")));
 
         String title = request.getParameter("title");
         m.setTitle(title);
@@ -44,16 +46,16 @@ public class CreateServlet extends HttpServlet {
         m.setContent(content);
 
         Timestamp currentTime = new Timestamp(System.currentTimeMillis());
-        m.setCreated_at(currentTime);
         m.setUpdated_at(currentTime);
 
         String _token = (String)request.getParameter("_token");
         if(_token != null && _token.equals(request.getSession().getId())) {
-            em.persist(m);
             em.getTransaction().commit();
         }
 
         em.close();
+
+        request.getSession().removeAttribute("id");
 
         response.sendRedirect(request.getContextPath() + "/index");
     }
